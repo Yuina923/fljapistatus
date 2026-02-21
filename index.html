@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maintenance</title>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    height:100vh;
+    overflow:hidden;
+    font-family:"Segoe UI",sans-serif;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(120,0,255,0.25), transparent 40%),
+        radial-gradient(circle at 70% 70%, rgba(0,150,255,0.2), transparent 40%),
+        radial-gradient(ellipse at bottom, #0d1b2a 0%, #000 100%);
+}
+
+.stars {
+    position:fixed;
+    width:100%;
+    height:100%;
+}
+
+.star {
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    animation: twinkle 4s infinite alternate ease-in-out;
+}
+
+@keyframes twinkle {
+    from { opacity:0.3; }
+    to { opacity:1; }
+}
+
+.meteor {
+    position: absolute;
+    width: 160px;
+    height: 2px;
+    background: linear-gradient(
+        to right,
+        rgba(255,255,255,0),
+        rgba(255,255,255,1)
+    );
+    transform: rotate(45deg);
+    transform-origin: left center;
+    animation: fall linear forwards;
+}
+
+.meteor::after {
+    content: "";
+    position: absolute;
+    right: -3px;
+    top: -2px;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 12px white, 0 0 25px white;
+}
+
+@keyframes fall {
+    0% {
+        transform: translate(-200px, -200px) rotate(45deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(120vw, 120vh) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+.container {
+    position:relative;
+    text-align:center;
+    z-index:10;
+}
+
+h1 {
+    font-size:3rem;
+    animation: glow 3s infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow:0 0 10px #00bfff; }
+    to { text-shadow:0 0 25px #00ffff; }
+}
+
+.countdown {
+    margin-top:25px;
+    font-size:1.8rem;
+    color:#00ffff;
+}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+    <h1>メンテナンス中</h1>
+    <p>現在システムメンテナンスを実施しております。</p>
+    <div class="countdown" id="countdown">計算中...</div>
+</div>
+
+<script>
+
+const starsContainer = document.getElementById("stars");
+
+for (let i = 0; i < 60; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.top = Math.random() * 100 + "vh";
+    star.style.left = Math.random() * 100 + "vw";
+    star.style.animationDuration = (Math.random() * 4 + 2) + "s";
+    starsContainer.appendChild(star);
+}
+
+// 背景の流星
+function createMeteor() {
+    const meteor = document.createElement("div");
+    meteor.className = "meteor";
+    meteor.style.left = Math.random() * window.innerWidth + "px";
+    meteor.style.top = "-150px";
+    meteor.style.animationDuration = (Math.random() * 4 + 6) + "s";
+    document.body.appendChild(meteor);
+    setTimeout(() => meteor.remove(), 10000);
+}
+
+setInterval(createMeteor, 2000);
+
+// 終了まで～の場所
+const endTime = new Date("2026-02-25T18:00:00+09:00"); // 2026年2月25日18:00 JST
+const countdownEl = document.getElementById("countdown");
+
+function updateCountdown() {
+    const now = new Date();
+    const diff = endTime - now;
+
+    if (diff <= 0) {
+        countdownEl.innerHTML = "メンテナンスが終了しました";
+        return;
+    }
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff/(1000*60*60))%24);
+    const minutes = Math.floor((diff/(1000*60))%60);
+    const seconds = Math.floor((diff/1000)%60);
+
+    countdownEl.innerHTML =
+        `終了まで ${days}日 ${hours}時間 ${minutes}分 ${seconds}秒`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+</body>
+</html>
